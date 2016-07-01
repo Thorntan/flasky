@@ -8,29 +8,25 @@ from datetime import datetime
 from db_add import QueryBySQL
 
 
-@blueprint.route('/', methods=['GET', 'POST'])
+@blueprint.route('/')
 def index():
-    form = NameForm()
-    if form.validate_on_submit():
-        session['name'] = form.name.data
-        return redirect(url_for('index'))
-    return render_template('index.html', form=form, name=session.get('name'))
+	return render_template('index.html')	
 
 
-@blueprint.route('/get_date')
-def get_date():
-    return render_template('get_date.html', current_time=datetime.utcnow())
-
-
-@blueprint.route('/user/<your_name>')
-def user(your_name):
-    return render_template('user.html', name=your_name)
-
-@blueprint.route('/data')
-def data():
-    sql = "select * from api limit 10"
-    result = QueryBySQL(sql)
-    return jsonify({"result:":result})
+#@blueprint.route('/get_date')
+#def get_date():
+#    return render_template('get_date.html', current_time=datetime.utcnow())
+#
+#
+#@blueprint.route('/user/<your_name>')
+#def user(your_name):
+#    return render_template('user.html', name=your_name)
+#
+#@blueprint.route('/data')
+#def data():
+#    sql = "select * from api limit 10"
+#    result = QueryBySQL(sql)
+#    return jsonify({"result:":result})
 
 @blueprint.route('/test')
 def test():

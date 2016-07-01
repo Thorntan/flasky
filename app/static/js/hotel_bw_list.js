@@ -1,7 +1,3 @@
-/**
- * Created by Timmy on 15/12/2.
- */
-
 $(document).ready(function() {
     $('#continentList').multiselect({
         nonSelectedText: '选择大洲',
@@ -192,7 +188,7 @@ function doQuery() {
 
     $.ajax({
         type: "POST",
-        url: "ajax/ajax.php?action=hotel_bw_list",
+        url: "/get_hotel",
         dataType: "json",
         data: {
 	    	hotelID:hotelID,

@@ -1,0 +1,60 @@
+{% block doc -%}
+<!DOCTYPE html>
+<html{% block html_attribs %}{% endblock html_attribs %}>
+{%- block html %}
+  <head>
+    {%- block head %}
+    <title>{% block title %}{{title|default}}{% endblock title %}</title>
+
+    {%- block metas %}
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {%- endblock metas %}
+
+    {%- block styles %}
+    <link rel="stylesheet" href="{{url_for('static',filename='css/jquery-ui-1.8.16.custom.css')}}" type="text/css"/>
+    <link rel="stylesheet" href="{{url_for('static',filename='css/bootstrap.min.css')}}" type="text/css"/>
+    <link rel="stylesheet" href="{{url_for('static',filename='css/bootstrap-multiselect.css')}}" type="text/css"/>
+    <link rel="stylesheet" href="{{url_for('static',filename='css/slick.grid.css')}}" type="text/css"/>
+    <link rel="stylesheet" href="{{url_for('static',filename='css/slick.pager.css')}}" type="text/css"/>
+    <link rel="stylesheet" href="{{url_for('static',filename='css/slick.columnpicker.css')}}" type="text/css"/>
+    <link rel="stylesheet" href="{{url_for('static',filename='reset.css')}}'"/>
+    {%- endblock styles %}
+    {%- endblock head %}
+  </head>
+  <body{% block body_attribs %}{% endblock body_attribs %}>
+    {% block body -%}
+    {% block navbar %}
+    {%- endblock navbar %}
+    {% block content -%}
+    {%- endblock content %}
+
+    {% block scripts %}
+	<script src="{{url_for('static', filename='js/jquery.js')}}"></script>
+	<script src="{{url_for('static', filename='js/bootstrap.min.js')}}"></script>
+	<script src="{{url_for('static', filename='js/jquery.event.drag-2.0.min.js')}}"></script>
+	<script src="{{url_for('static', filename='js/jquery.ui.core.js')}}"></script>
+	<script src="{{url_for('static', filename='js/jquery.ui.widget.js')}}"></script>
+	<script src="{{url_for('static', filename='js/jquery.ui.mouse.js')}}"></script>
+	<script src="{{url_for('static', filename='js/jquery.ui.resizable.js')}}"></script>
+	<script src="{{url_for('static', filename='js/jquery.ui.sortable.js')}}"></script>
+	<!-- slickgrid -->
+	<script src="{{url_for('static', filename='js/slick.core.js')}}"></script>
+	<script src="{{url_for('static', filename='js/slick.grid.js')}}"></script>
+	<script src="{{url_for('static', filename='js/slick.dataview.js')}}"></script>
+	<script src="{{url_for('static', filename='js/slick.formatters.js')}}"></script>
+	<script src="{{url_for('static', filename='js/slick.editors.js')}}"></script>
+	<script src="{{url_for('static', filename='js/slick.checkboxselectcolumn.js')}}"></script>
+	<script src="{{url_for('static', filename='js/slick.rowselectionmodel.js')}}"></script>
+	<script src="{{url_for('static', filename='js/slick.pager.js')}}"></script>
+	<script src="{{url_for('static', filename='js/slick.columnpicker.js')}}"></script>
+	<!-- bootstrap helper -->
+	<script src="{{url_for('static', filename='js/bootstrap-slickgrid.js')}}"></script>
+	<script src="{{url_for('static', filename='js/bootstrap-multiselect.js')}}"></script>
+	<script src="{{url_for('static', filename='js/hotel_bw_list.js')}}"></script>	
+
+    {%- endblock scripts %}
+    {%- endblock body %}
+  </body>
+{%- endblock html %}
+</html>
+{% endblock doc -%}

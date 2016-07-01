@@ -1,41 +1,136 @@
-{% extends "bootstrap/base.html" %}
+{% block doc -%}
+<!DOCTYPE html>
+<html lang="zh-CN">
+{%- block html %}
+  <head>
+    {%- block head %}
 
-{% block title %}Flasky{% endblock %}
+    <title>{% block title %}{{title|default}}{% endblock title %}</title>
 
-{% block head %}
-{{ super() }}
-<link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
-<link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
-{% endblock %}
+    {%- block metas %}
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {%- endblock metas %}
 
-{% block navbar %}
-<div class="navbar navbar-inverse" role="navigation">
-    <div class="container">
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <a class="navbar-brand" href="/">Flasky</a>
-        </div>
-        <div class="navbar-collapse collapse">
-            <ul class="nav navbar-nav">
-                <li><a href="/">Home</a></li>
-            </ul>
-        </div>
-    </div>
-</div>
-{% endblock %}
+    {%- block styles %}
+    <link rel="stylesheet" href="{{url_for('static',filename='css/jquery-ui-1.8.16.custom.css')}}" type="text/css"/>
+    <link rel="stylesheet" href="{{url_for('static',filename='css/bootstrap.min.css')}}" type="text/css"/>
+    <link rel="stylesheet" href="{{url_for('static',filename='css/bootstrap-multiselect.css')}}" type="text/css"/>
+    <link rel="stylesheet" href="{{url_for('static',filename='css/slick.grid.css')}}" type="text/css"/>
+    <link rel="stylesheet" href="{{url_for('static',filename='css/slick.pager.css')}}" type="text/css"/>
+    <link rel="stylesheet" href="{{url_for('static',filename='css/slick.columnpicker.css')}}" type="text/css"/>
+    <link rel="stylesheet" href="{{url_for('static',filename='css/reset.css')}}'"/>
+    {%- endblock styles %}
+    {%- endblock head %}
+  </head>
 
-{% block content %}
-<div class="container">
-    {% block page_content %}{% endblock %}
-</div>
-{% endblock %}
+  <body{% block body_attribs %}{% endblock body_attribs %}>
+    {% block body -%}
 
-{% block scripts %}
-{{ super() }}
-{{ moment.include_moment() }}
-{% endblock %}
+    {% block navbar %}
+	<div class="navbar navbar-inverse">
+	    <div class="navbar-inner">
+	        <a class="brand" href="#">城市数据管理平台</a>
+	        <ul class="nav">
+	            <li class="dropdown">
+	                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+	                总览
+	                <b class="caret"></b>
+	                </a>
+	                <ul class="dropdown-menu">
+	                <li><a href="continent_info.php">大洲信息页</a></li>
+	                <li><a href="city_info.php">城市信息页</a></li>
+	                </ul>
+	            </li>
+	            <li class="dropdown">
+	                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+	                景点数据
+	                <b class="caret"></b>
+	                </a>
+	                <ul class="dropdown-menu">
+	                <li><a href="attr_info.php">景点信息页</a></li>
+	                <li><a href="bw_list.php">景点详情页(黑白名单)</a></li>
+	                <li><a href="anno_info.php">景点标注任务列表页</a></li>
+	                </ul>
+	            </li>
+
+            	<li class="dropdown">
+            	    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+            	    购物数据
+            	    <b class="caret"></b>
+            	    </a>
+            	    <ul class="dropdown-menu">
+            	    <li><a href="shop_info.php">购物信息页</a></li>
+            	    <li><a href="shop_bw_list.php">购物详情页(黑白名单)</a></li>
+            	    <li><a href="shop_anno_info.php">购物标注任务列表页</a></li>
+            	    </ul>
+            	</li>
+            	<li class="dropdown">
+            	    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+            	    餐厅数据
+            	    <b class="caret"></b>
+            	    </a>
+            	    <ul class="dropdown-menu">
+            	    <li><a href="rest_info.php">餐馆信息页</a></li>
+            	    <li><a href="rest_bw_list.php">餐馆详情页(黑白名单)</a></li>
+            	    <li><a href="rest_anno_info.php">餐馆标注任务列表页</a></li>
+            	    </ul>
+            	</li>
+            	<li class="dropdown">
+            	    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+            	    交通数据
+            	    <b class="caret"></b>
+            	    </a>
+            	    <ul class="dropdown-menu">
+            	    <li><a href="city_traf.php">城市内交通详情页</a></li>
+            	    <li><a href="traf_info.php">交通流程详情页</a></li>
+            	    </ul>
+            	</li>
+				<li class="dropdown">
+				     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+				     酒店数据
+				     <b class="caret"></b>
+				     </a>
+				     <ul class="dropdown-menu">
+				     <li><a href="/hotel">酒店城市页</a></li>
+				     <li><a href="/hotel">酒店详情页</a></li>
+				     </ul>
+				</li>
+	        <ul>
+	    </div>
+	</div>
+    {%- endblock navbar %}
+
+    {% block content -%}
+    {%- endblock content %}
+
+    {% block scripts %}
+	<script src="{{url_for('static', filename='js/jquery.js')}}"></script>
+	<script src="{{url_for('static', filename='js/bootstrap.min.js')}}"></script>
+	<script src="{{url_for('static', filename='js/jquery.event.drag-2.0.min.js')}}"></script>
+	<script src="{{url_for('static', filename='js/jquery.ui.core.js')}}"></script>
+	<script src="{{url_for('static', filename='js/jquery.ui.widget.js')}}"></script>
+	<script src="{{url_for('static', filename='js/jquery.ui.mouse.js')}}"></script>
+	<script src="{{url_for('static', filename='js/jquery.ui.resizable.js')}}"></script>
+	<script src="{{url_for('static', filename='js/jquery.ui.sortable.js')}}"></script>
+	<!-- slickgrid -->
+	<script src="{{url_for('static', filename='js/slick.core.js')}}"></script>
+	<script src="{{url_for('static', filename='js/slick.grid.js')}}"></script>
+	<script src="{{url_for('static', filename='js/slick.dataview.js')}}"></script>
+	<script src="{{url_for('static', filename='js/slick.formatters.js')}}"></script>
+	<script src="{{url_for('static', filename='js/slick.editors.js')}}"></script>
+	<script src="{{url_for('static', filename='js/slick.checkboxselectcolumn.js')}}"></script>
+	<script src="{{url_for('static', filename='js/slick.rowselectionmodel.js')}}"></script>
+	<script src="{{url_for('static', filename='js/slick.pager.js')}}"></script>
+	<script src="{{url_for('static', filename='js/slick.columnpicker.js')}}"></script>
+	<!-- bootstrap helper -->
+	<script src="{{url_for('static', filename='js/bootstrap-slickgrid.js')}}"></script>
+	<script src="{{url_for('static', filename='js/bootstrap-multiselect.js')}}"></script>
+
+    {%- endblock scripts %}
+    {%- endblock body %}
+  </body>
+{%- endblock html %}
+</html>
+{% endblock doc -%}
