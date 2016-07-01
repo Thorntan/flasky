@@ -32,3 +32,10 @@ def data():
     result = QueryBySQL(sql)
     return jsonify({"result:":result})
 
+@blueprint.route('/test')
+def test():
+	return render_template('test.html')
+
+@blueprint.route('/hotel')
+def test1():
+	return render_template('hotel.html')
