@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}test{% endblock %}
+
+{% block head %}
+{{ super() }}
+	<link rel="stylesheet" href="{{url_for('static',filename='css/slick.grid.css')}}" type="text/css"/>	
+	<link rel="stylesheet" href="{{url_for('static',filename='css/jquery-ui-1.8.16.custom.css')}}" type="text/css"/>	
+{% endblock %}
+
+{% block page_content %}
+	<h1>hhh</h1>
+	<div id="myGrid" style="width:600px;height:500px;"></div>
+{% endblock %}
+
+{% block scripts %}
+{{ supper }}
+	<script src="{{url_for('static', filename='js/jquery.js')}}"></script>
+	<script src="{{url_for('static', filename='js/jquery.event.drag-2.2.js')}}"></script>
+	<script src="{{url_for('static', filename='js/slick.core.js')}}"></script>
+	<script src="{{url_for('static', filename='js/slick.grid.js')}}"></script>
+	<script src="{{url_for('static', filename='js/test.js')}}"></script>
+{% endblock %}
