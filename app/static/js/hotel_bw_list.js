@@ -193,14 +193,14 @@ function doQuery() {
         data: {
 	    	hotelID:hotelID,
 	    	hotelName:hotelName,
-            	cityID:cityID,
-            	cityName:cityName,
-            	country:country,
-		continent:continent,
-            	status:status,
-            	city_type:city_type,
-            	sortTag:sortTag,
-            	sortOrder:sortOrder
+            cityID:cityID,
+            cityName:cityName,
+            country:country,
+			continent:continent,
+            status:status,
+            city_type:city_type,
+            sortTag:sortTag,
+            sortOrder:sortOrder
         },
         beforeSend: function() {
             $("#over").css("display","block");
