@@ -7,16 +7,21 @@
 <div class="container">
     <h3 class="text-center">城市数据统计</h3>
 
+	<div class="row">
+		<div class="span8"></div>
+		<div class="span2" >
+			<select class="input-small" id="environment" name="environment">
+				<option value="test">test环境</option>
+				<option value="online">线上环境</option>
+			</select>
+		</div>
+		<div class="" style="float: right">
+			<button type="button" class="span2 btn btn-primary" style="float: right" onclick="doQuery();">查询</button>
+		</div>
+	</div>
 
 	<!-- 展示数据的表格 -->
-
-	<ul class="nav nav-tabs">
-	<li class="active"><a data-toggle="tab" id="test">test环境</a></li>
-	<li ><a data-toggle="tab" id="online">线上环境</a></li>
-	<li ><a data-toggle="tab" id="dev">开发环境</a></li>
-	</ul>
-
-	<div class="row" id="default_table">
+	<div class="row">
 		{% if data.status!=0 %}
 			查询数据失败!{{ data.status }}
 		{% else %}
@@ -68,42 +73,13 @@
 			<!--  -->
 		{% endif %}
 	</div>
-	<div id="loading" class="row hide text-center">
-		<img src="static/images/loading.gif" />
-	</div>
-    <div id="table2" class="row hide">
-        <table  class="table  table-condensed table-bordered">
-            <thead id="header">
-                <tr>
-                <td> 城市ID </td>
-                <td> 城市名称 </td>
-                <td> 国家 </td>
-                <td> 城市热度 </td>
-                <td> 城市状态 </td>
-                <td> 酒店总数 </td>
-                <td> 酒店有图比例 </td>
-                <td> 酒店有评论比例 </td>
-                <td> 景点总数 </td>
-                <td> 景点有图比例 </td>
-                <td> 景点有评论比例 </td>
-                <td> 餐厅总数 </td>
-                <td> 餐厅有图比例 </td>
-                <td> 餐厅有评论比例 </td>
-                <td> 购物总数 </td>
-                <td> 购物有图比例 </td>
-                <td> 购物有评论比例 </td>
-                </tr>
-            </thead>
-			<thead id="table2_result">
-			</thead>
-        </table>
-    </div>
 </div>
 
 {% endblock %}
 
-{% block scripts %}
-	{{ super() }}
-	<script src="static/js/index.js"></script>
+<!--
+{% block script %}
+	<script src="{{url_for('static', filename='js/hotel.js')}}"></script>
 {% endblock %}
+-->
 

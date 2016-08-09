@@ -12,21 +12,17 @@ var checkboxSelector = new Slick.CheckboxSelectColumn();
 var columns = [
     checkboxSelector.getColumnDefinition(),
     {id: "id", name:"No.", field: "id", width:50},
-    {id: "city_id", name: "城市ID", field: "city_id"},
-    {id: "city_name", name: "城市名称", field: "city_name"},
+    {id: "city", name: "城市名称", field: "city"},
+    {id: "cid", name: "城市ID", field: "cid"},
     {id: "country", name: "国家", field: "country"},
-    {id: "hotel_id", name: "酒店ID", field: "hotel_id"},
-    {id: "hotel_name", name: "酒店名称", field: "hotel_name"},
-	{id: "hotel_name_en",name:"酒店英文名",field:"hotel_name_en"},
-	{id: "map_info",name:"坐标",field:"map_info"},
-	{id: "address",name:"地址",field:"address"},
-	{id: "star",name:"星级",field:"star"},
-	{id: "grade",name:"评分",field:"grade"},
-	{id: "all_grade",name:"详细评分",field:"all_grade"},
-	{id: "source",name:"数据来源",field:"source"},
-	{id: "comment_num",name:"评论数",field:"comment_num"},
-	{id: "img_num",name:"图片数",field:"img_num"},
-	{id: "img_list",name:"图片",field:"img_list",width:300}
+    {id: "city_status", name: "上线状态", field: "city_status"},
+    {id: "visit_num", name: "热度", field: "visit_num"},
+    {id: "hotel_num_online", name: "线上酒店数量", field: "hotel_num_online", width: 120},
+    {id: "hotel_num_total", name: "酒店总数", field: "hotel_num_total"},
+    {id: "hotel_image_total", name: "有图酒店总数", field: "hotel_image_total",width: 120},
+    {id: "hotel_name_total", name: "有中文名称的酒店数", field: "hotel_name_total",width: 120},
+    {id: "hotel_name_en_total", name: "有英文名称的酒店数", field: "hotel_name_en_total",width: 120},
+    {id: "hotel_comment_total", name: "有评论的酒店数", field: "hotel_comment_total",width: 120}
 ];
 
 var options = {
@@ -69,6 +65,7 @@ $(function(){
     });
 });
 
+
 /* Export
  ----------------------------------*/
 $("#exportToCSV").click(function () {
@@ -83,13 +80,14 @@ $("#exportToCSV").click(function () {
                 tmp["城市名"] = sourceData[j].city_name;
                 tmp["城市ID"] = sourceData[j].city_id;
                 tmp["国家"] = sourceData[j].country;
+                tmp["酒店ID"] = sourceData[j].city_status;
                 break;
             }
         }
         data[i] = tmp;
     }
 	console.log(data);
-    $('<form action="ajax/ajax.php?action=hotel_info_export" method="POST" enctype="multipart/form-data">' +
+    $('<form action="export" method="POST" enctype="multipart/form-data">' +
     '<textarea type="hidden" name="data">' + JSON.stringify(data) + '</textarea>' +
     '</form>').submit();
 });
@@ -135,27 +133,23 @@ function makeTable(data) {
     var newData = [];
     var cnt = 0;
     console.log("maketable");
+	console.log(data)
     data.forEach(function(line) {
-	var img = line.img_list!="" ? line.img_list.replace(/ /g,'').split('|'):[];
         var obj = {
 		"checked":0,
 		"sel":line.id,
             	"id":++cnt,
-            	"city_id":line.city_id,
-            	"city_name":line.city_name,
+            	"city":line.name,
+            	"cid":line.id,
             	"country":line.country,
-		"hotel_id":line.hotel_id,
-		"hotel_name":line.hotel_name,
-		"hotel_name_en":line.hotel_name_en,
-		"map_info":line.map_info,
-		"address":line.address,
-		"star":line.star,
-		"grade":line.grade,
-		"all_grade":line.all_grade,
-		"source":line.source,
-		"comment_num":line.comment_num,
-		"img_num":img.length,
-		"img_list":line.img_list
+            	"city_status":line.city_status,
+            	"visit_num":line.visit_num,
+            	"hotel_num_online":line.hotel_num_online,
+            	"hotel_num_total":line.hotel_num_total,
+            	"hotel_image_total":line.hotel_image_total,
+            	"hotel_name_total":line.hotel_name_total,
+            	"hotel_name_en_total":line.hotel_name_en_total,
+            	"hotel_comment_total":line.hotel_comment_total
         };
         newData.push(obj);
     });
@@ -165,42 +159,29 @@ function makeTable(data) {
 }
 
 function doQuery() {
-    var hotelID = $('#hotelID').val() !="" ? $('#hotelID').val().replace(/，/g,',').replace(/ /g,'').split(',') : [];
-    var hotelName = $('#hotelName').val() != "" ? $('#hotelName').val().replace(/，/g,',').replace(/ /g,'').split(',') : [];
-    var cityID = $('#cityID').val() !="" ? $('#cityID').val().replace(/，/g,',').replace(/ /g,'').split(',') : [];
-    console.log(hotelID);
-    console.log(hotelName);
-    console.log(cityID);
-    var cityName = $('#cityName').val() != "" ? $('#cityName').val().replace(/，/g,',').replace(/ /g,'').split(',') : [];
-    console.log(cityName);
-    var country = $('#country').val() != "" ? $('#country').val().replace(/，/g,',').replace(/ /g,'').split(',') : [];
-    console.log(country);
-    var status = $('#status').val();
-    var continent = $('#continentList').val() || [];
-    console.log(continent);
-    console.log(status);
+	var cityID = $('#cityID').val();
+	var cityName = $('#cityName').val();
+	var country = $('#country').val();
+	var city_status = $('#city_status').val();
     var city_type = $('#city_type').val();
-    console.log(city_type);
     var sortTag = $('#sortTag').val();
-    console.log(sortTag);
-    var sortOrder = $('#sortOrder').val() == "positive" ? "" : "DESC";
-    console.log(sortOrder);
+    var sortOrder = $('#sortOrder').val();
+	var environment = $('#environment').val();
+	console.log('********'+cityID)
 
     $.ajax({
         type: "POST",
-        url: "/get_hotel",
+        url: "get_hotel_city",
         dataType: "json",
         data: {
-	    	hotelID:hotelID,
-	    	hotelName:hotelName,
-            cityID:cityID,
-            cityName:cityName,
-            country:country,
-			continent:continent,
-            status:status,
-            city_type:city_type,
-            sortTag:sortTag,
-            sortOrder:sortOrder
+            "cityID":cityID,
+            "cityName":cityName,
+            "country":country,
+            "city_status":city_status,
+            "city_type":city_type,
+            "sortTag":sortTag,
+            "sortOrder":sortOrder,
+			"environment":environment
         },
         beforeSend: function() {
             $("#over").css("display","block");
@@ -212,9 +193,11 @@ function doQuery() {
         },
         success: function(data) {
             if (data.status == 0) {
-                makeTable(data.msg);
-                console.log(data.msg);
+                console.log("OKOKOK");
+                makeTable(data.result);
+                console.log(data.result);
             } else {
+                console.log("wrongwrong");
                 alert(data.msg);
             }
         },
@@ -227,6 +210,6 @@ function doQuery() {
 /* From City Info
  ----------------------------------*/
 function showAttr(id) {
-    $("#hotelID").val(id);
+    $("#cityID").val(id);
     doQuery();
 }

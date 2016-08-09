@@ -1,15 +1,3 @@
-/**
- * Created by Timmy on 15/12/1.
- */
-
-/*$(document).ready(function() {
-    $('#continentList').multiselect({
-        nonSelectedText: '选择大洲',
-        allSelectedText: '全选',
-        nSelectedText: ' 项已选'
-    });
-});
-*/
 var sourceData=[];
 var selectArray=[];
 var grid;
@@ -17,18 +5,32 @@ var checkboxSelector = new Slick.CheckboxSelectColumn();
 var columns = [
     checkboxSelector.getColumnDefinition(),
     {id: "id", name:"No.", field: "id", width:50},
-    {id: "cname", name: "名称", field: "cname"},
-    {id: "cnt_online", name: "线上城市数", field: "cnt_online", width:120},
-    {id: "cnt_total", name: "总城市数", field: "cnt_total", width:120},
-    {id: "attr_num_online", name: "线上景点数", field: "attr_num_online", width:120, formatter:trendFormatter},
-    {id: "attr_num_total", name: "景点总数", field: "attr_num_total"},
-    {id: "hotel_num_online", name: "线上酒店数", field: "hotel_num_online", width:120},
-    {id: "hotel_num_total", name: "酒店总数", field: "hotel_num_total"},
-    {id: "shop_num_online", name: "线上购物数", field: "shop_num_online", width:120,formatter:trendFormatter},
-    {id: "shop_num_total", name: "购物总数", field: "shop_num_total"},
-    {id: "rest_num_online", name: "线上餐厅数", field: "rest_num_online", width:120,formatter:trendFormatter},
-    {id: "rest_num_total", name: "餐厅总数", field: "rest_num_total"},
-    {id: "city_detail", name: "城市详情", field: "city_detail", formatter:cityDetailFormatter}
+    {id: "city", name: "城市名称", field: "city"},
+    {id: "city_id", name: "城市ID", field: "city_id"},
+    {id: "country", name: "国家", field: "country"},
+    {id: "city_status", name: "上线状态", field: "city_status"},
+    {id: "visit_num", name: "热度", field: "visit_num"},
+
+    {id: "hotel_total", name: "线上酒店数量", field: "hotel_total", width:120},
+    {id: "hotel_comment_percentage", name:"线上酒店有评论比例", field: "hotel_comment_percentage", width: 160},
+    {id: "hotel_image_percentage", name: "线上酒店有图比例", field: "hotel_image_percentage", width:150},
+    {id: "hotel_detail", name: "酒店信息", field: "hotel_detail", formatter:hotelDetailFormatter},
+
+    {id: "attr_total", name: "线上景点数量", field: "attr_total", width:120},
+    {id: "attr_comment_percentage", name:"线上景点有评论比例", field: "attr_comment_percentage", width: 160},
+    {id: "attr_image_percentage", name: "线上景点有图比例", field: "attr_image_percentage", width:150},
+    {id: "attr_detail", name: "景点信息", field: "attr_detail", formatter:attrDetailFormatter},
+
+    {id: "rest_total", name: "线上餐厅数量", field: "rest_total", width:120},
+    {id: "rest_comment_percentage", name:"线上餐厅有评论比例", field: "rest_comment_percentage", width: 160},
+    {id: "rest_image_percentage", name: "线上餐厅有图比例", field: "rest_image_percentage", width:150},
+    {id: "rest_detail", name: "餐厅信息", field: "rest_detail", formatter:restDetailFormatter},
+
+    {id: "shop_total", name: "线上购物数量", field: "shop_total", width:120},
+    {id: "shop_comment_percentage", name:"线上购物有评论比例", field: "shop_comment_percentage", width: 160},
+    {id: "shop_image_percentage", name: "线上购物有图比例", field: "shop_image_percentage", width:150},
+    {id: "shop_detail", name: "购物信息", field: "shop_detail", formatter:shopDetailFormatter}
+
 ];
 
 var options = {
@@ -83,45 +85,15 @@ function restDetailFormatter(row, cell, value, columnDef, dataContext) {
     return '<a href="rest_info.php?id='+value+'")">详情</a>';
 }
 
-function cityDetailFormatter(row, cell, value, columnDef, dataContext) {
-    return '<a href="city_info.php?cname='+value+'")">详情</a>';
+function hotelDetailFormatter(row, cell, value, columnDef, dataContext) {
+    return '<a href="hotel_info.php?id='+value+'")">详情</a>';
 }
 
+
 function trendFormatter(row, cell, value, columnDef, dataContext) {
-	return '<a href="show_all_trend.php?source='+dataContext['cname']+'&table='+value[1]+'&col=online&type=0" target="_blank">'+value[0]+'</a>';
+    return '<a href="show_trend.php?city_id='+dataContext['city_id']+'&cname='+dataContext['city']+'&col='+value[1]+'&type='+value[2]+'" target="_blank">'+value[0]+'</a>';
 }
-/* Export
- ----------------------------------*/
-$("#exportToCSV").click(function () {
-    var idList = getSelectedArray();
-    var data = {};
-    var tmp = {};
-    for (var i = 0; i < idList.length; ++i) {
-        tmp = {};
-        for (var j = 0; j < sourceData.length; ++j) {
-            if (idList[i] == j+1) {
-                tmp["No."] = j+1;
-                tmp["大洲名"] = sourceData[j].name;
-                tmp["线上城市数"] = sourceData[j].city_online;
-                tmp["总城市数"] = sourceData[j].city_total;
-                tmp["线上景点数"] = sourceData[j].attr_num_online;
-                tmp["景点总数"] = sourceData[j].attr_num_total;
-                tmp["线上酒店数"] = sourceData[j].hotel_num_online;
-                tmp["酒店总数"] = sourceData[j].hotel_num_total;
-                tmp["线上购物数"] = sourceData[j].shop_num_online;
-                tmp["购物总数"] = sourceData[j].shop_num_total;
-                tmp["线上餐厅数"] = sourceData[j].rest_num_online;
-                tmp["餐厅总数"] = sourceData[j].rest_num_total;
-                break;
-            }
-        }
-        data[i] = tmp;
-    }
-	console.log(data);
-    $('<form action="ajax/ajax.php?action=continent_info_export" method="POST" enctype="multipart/form-data">' +
-    '<textarea type="hidden" name="data">' + JSON.stringify(data) + '</textarea>' +
-    '</form>').submit();
-});
+
 
 function getSelectedArray() {
     var idList = [];
@@ -163,23 +135,34 @@ function makeTable(data) {
     sourceData = data;
     var newData = [];
     var cnt = 0;
+    console.log("maketable");
+	console.log(data)
     data.forEach(function(line) {
         var obj = {
             "checked":0,
+            "sel":line.id,
             "id":++cnt,
-			"sel":cnt,
-            "cname":line.name,
-            "cnt_online":line.city_online,
-            "cnt_total":line.city_total,
-            "attr_num_online":[line.attr_num_online,'attr'],
-            "attr_num_total":line.attr_num_total,
-            "hotel_num_online":line.hotel_num_online,
-            "hotel_num_total":line.hotel_num_total,
-            "shop_num_online":[line.shop_num_online,'shop'],
-            "shop_num_total":line.shop_num_total,
-            "rest_num_online":[line.rest_num_online,'rest'],
-            "rest_num_total":line.rest_num_total,
-            "city_detail":line.name
+            "city":line.name,
+            "city_id":line.id,
+            "country":line.country,
+            "city_status":line.city_status,
+            "visit_num":line.visit_num,
+            "hotel_total":line.hotel_total,
+            "hotel_image_percentage":line.hotel_image_percentage,
+            "hotel_comment_percentage":line.hotel_comment_percentage,
+            "attr_total":line.attr_total,
+            "attr_image_percentage":line.attr_image_percentage,
+            "attr_comment_percentage":line.attr_comment_percentage,
+            "rest_total":line.rest_total,
+            "rest_image_percentage":line.rest_image_percentage,
+            "rest_comment_percentage":line.rest_comment_percentage,
+            "shop_total":line.shop_total,
+            "shop_image_percentage":line.shop_image_percentage,
+            "shop_comment_percentage":line.shop_comment_percentage,
+            "hotel_detail":line.id,
+            "attr_detail":line.id,
+            "rest_detail":line.id,
+            "shop_detail":line.id	
         };
         newData.push(obj);
     });
@@ -189,16 +172,15 @@ function makeTable(data) {
 }
 
 function doQuery() {
-    var status = $('#status').val();
-    //console.log(status);
-    var city_type = $('#city_type').val();
-    //console.log(city_type);
+	var city_name = $("#city_name").val();
 
     $.ajax({
         type: "POST",
-        url: "ajax/ajax.php?action=continent_info",
+        url: "/get_all_city",
         dataType: "json",
         data: {
+            "city_name":city_name,
+			"environment":environment
         },
         beforeSend: function() {
             $("#over").css("display","block");
@@ -210,9 +192,11 @@ function doQuery() {
         },
         success: function(data) {
             if (data.status == 0) {
-                makeTable(data.msg);
-                console.log(data.msg);
+                console.log("OKOKOK");
+                makeTable(data.result);
+                console.log(data.result);
             } else {
+                console.log("wrongwrong");
                 alert(data.msg);
             }
         },
@@ -220,4 +204,11 @@ function doQuery() {
             alert("服务器传输错误");
         }
     });
+}
+
+/* From City Info
+ ----------------------------------*/
+function showAttr(id) {
+    $("#city_name").val(id);
+    doQuery();
 }

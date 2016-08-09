@@ -1,8 +1,5 @@
-/**
- * Created by Timmy on 15/12/2.
- */
 $(document).ready(function() {
-    $('#col').multiselect({
+    $('#labelField').multiselect({
         nonSelectedText: '选择标注字段',
         allSelectedText: '全选',
         nSelectedText: ' 项已选'
@@ -27,7 +24,7 @@ var columns = [
 //    {id: "cid", name: "城市ID", field: "cid"},
     {id: "country", name: "国家", field: "country"},
     {id: "taskName", name: "任务名称", field: "taskName",width: 150},
-    {id: "col", name: "标注字段", field: "col", width:150},
+    {id: "labelField", name: "标注字段", field: "labelField", width:150},
     {id: "progress", name: "任务进度", field: "progress"},
     {id: "annoWho", name: "标注人", field: "annoWho", width: 150},
     {id: "checkWho", name: "check负责人", field: "checkWho", width: 100},
@@ -121,7 +118,7 @@ $("#exportToCSV").click(function () {
         data[i] = tmp;
     }
 	console.log(data);
-    $('<form action="ajax/ajax.php?action=shop_anno_info_export" method="POST" enctype="multipart/form-data">' +
+    $('<form action="export" method="POST" enctype="multipart/form-data">' +
     '<textarea type="hidden" name="data">' + JSON.stringify(data) + '</textarea>' +
     '</form>').submit();
 });
@@ -160,53 +157,20 @@ $("#selectAll").click(function() {
     grid.render();
 });
 
-/* Batch Delete Tasks
- ----------------------------------*/
-$("#batchDel").click(function() {
-	var idList = getSelectedArray();
-	if (idList.length == 0) {
-		alert("未选中行");
-		return;
-	}
-	if (confirm("确认要删除"+idList.length+"个任务吗？")) {
-		$.ajax({
-			type: "POST",
-			url: "ajax/ajax.php?action=shop_anno_info_batchDel",
-			dataType: "json",
-			data: {
-				idList: idList
-			},
-        	success: function(data) {
-            	if (data.status == 0) {
-                	alert(data.msg);
-	                doQuery();
-    	        } else {
-        	        alert(data.msg);
-					console.log(data.msg);
-            	}
-    	    },
-        	error: function(XMLHttpRequest, textStatus, errorThrown) {
-            	alert("服务器传输错误");
-	        }
-		});
-	}
-});
-
 /* Query
  ----------------------------------*/
 function getFields(fields) {
     var fArray = fields.split("|");
     var fTnArray = [];
     var tmp = {
-		'1':'购物名称',
-		'2':'开关门时间',
+		'1':'景点名称',
+		'2':'门票价格描述',
 		'3':'游玩时长',
-		'4':'购物tag',
-		'5':'品牌',
-		'6':'室内地图',
-		'7':'购物介绍',
-		'8':'图片',
-		'9':'购物归属'
+		'4':'开关门时间',
+		'5':'景点包含关系功能暂未实现',
+		'6':'景点图片',
+		'7':'景点描述',
+		'8':'景点归属'
     };
     for (var i = 0; i < fArray.length; ++i) {
         fTnArray.push(tmp[fArray[i]]);
@@ -227,13 +191,13 @@ function makeTable(data) {
             "cid":line.cid,
             "country":line.country,
             "taskName":line.name,
-            "col":getFields(line.fields),
+            "labelField":getFields(line.fields),
             "progress":line.doneTask+'/'+line.totalTask,
             "annoWho":line.modifier,
             "checkWho":line.checkWho,
             "checkStatus":(line.checked=="1"?"CK":"未CK") + "/"  + (line.checkRemark==""?"无评论":line.checkRemark),
             "syncStatus":line.synState=="0"?"未同步":"已同步",
-            "taskAddr":"http://testbi.mioji.com/markSystem/cityShop/list/tid/"+line.tid,
+            "taskAddr":"http://bi.mioji.com/markSystem/cityScenic/list/tid/"+line.tid,
 			"deleteTask": line.tid,
             "startTime":line.generTime,
             "finishTime":line.finish,
@@ -251,19 +215,20 @@ function makeTable(data) {
 function doQuery() {
     var taskName = $('#taskName').val() || "";
     var matchFlag = $('input[name="taskMatch"]:checked').val();
-    var taskID = $('#taskID').val() != "" ? $('#taskID').val().replace(/，/g,',').replace(/ /g,'').split(',') : [];
-    var cityName = $('#cityName').val() != "" ? $('#cityName').val().replace(/，/g,',').replace(/ /g,'').split(',') : [];
-    var isCheck = $('#isCheck').val();
-    var isSync = $('#isSync').val();
-    var col = $('#col').val() || [];
-    var annoWho = $('#annoWho').val() || [];
-    var checkWho = $('#checkWho').val() != "" ? $('#checkWho').val().replace(/，/g,',').replace(/ /g,'').split(',') : [];
     var sortTag = $('#sortTag').val();
-    var sortOrder = $('#sortOrder').val() == "positive" ? "" : "DESC";
+    var sortOrder = $('#sortOrder').val();
+	var isCheck = $('#isCheck').val();
+	var isSync = $('#isSync').val();
+
+	var cityName = $('#cityName').val();
+	var labelField = $('#labelField').val();
+	var annoWho = $('#annoWho').val();
+	var checkWho = $('#checkWho').val();
+	var taskID = $('#taskID').val();
 
     $.ajax({
         type: "POST",
-        url: "ajax/ajax.php?action=shop_anno_info",
+        url: "attr_task_query",
         dataType: "json",
         data: {
             taskName:taskName,
@@ -272,8 +237,8 @@ function doQuery() {
             cityName:cityName,
             isCheck:isCheck,
             isSync:isSync,
-            col:col,
-            annoWho:annoWho,
+            "labelField[]":labelField,
+            "annoWho[]":annoWho,
             checkWho:checkWho,
             sortTag:sortTag,
             sortOrder:sortOrder
@@ -287,12 +252,10 @@ function doQuery() {
             $("#layout").css("display","none");
         },
         success: function(data) {
-            if (data.status == 0) {
-                makeTable(data.msg);
-                console.log(data.msg);
+            if (data.status == "success") {
+                makeTable(data.result);
             } else {
-    	        alert(data.msg);
-				console.log(data.msg);
+                alert(data.status);
             }
         },
         error: function(XMLHttpRequest, textStatus, errorThrown) {
@@ -306,27 +269,67 @@ function doQuery() {
 function deleteTask(tid) {
 	if (confirm("确定删除该任务？")) {	
 		$.ajax({
-			type: "POST",
-			url: "2.php",
-	        dataType: "json",
+			type:"POST",
+			async:true,
+			method: "POST",
+			//url: "http://10.10.167.111/Api/DeleteMarkTask",
+			url: "attr_task_delete",
+	        dataType:"json",
     	    data: {
-  	    	    tid:tid,
-				type:5
+  	    	    "tid[]":tid,
+				"type":"2"
         	},
 	        success: function(data) {
-    	        if (data.error.error_id == 0) {
+    	        if (data.status == 'success') {
 					alert("删除任务成功！");
- 					doQuery();
+					// 删除成功后刷新页面
+					window.location.reload();
+ 					//doQuery();
 				} else {
-					alert(data.error.error_str);
+					alert(data.status);
 				}
 	        },
     	    error: function(XMLHttpRequest, textStatus, errorThrown) {
-        	   alert("服务器传输错误");
+        	   alert("服务器传输错误"+XMLHttpRequest+ textStatus+errorThrown);
 	        }
 	    });
 	}
 }
+
+/* Batch Delete Tasks
+ ----------------------------------*/
+$("#batchDel").click(function() {
+	var idList = getSelectedArray();
+	if (idList.length == 0) {
+		alert("未选中行");
+		return;
+	}
+	if (confirm("确认要删除"+idList.length+"个任务吗？")) {
+		$.ajax({
+			type: "POST",
+			url: "attr_task_delete",
+			dataType: "json",
+			data: {
+				"tid[]":idList,
+				"type":"2"
+			},
+        	success: function(data) {
+    	        if (data.status == 'success') {
+					alert("删除任务成功！");
+					window.location.reload();
+ 					//doQuery();
+				} else {
+					alert(data.status);
+					//location.reload(); 
+				}
+	        },
+        	error: function(XMLHttpRequest, textStatus, errorThrown) {
+            	alert("服务器传输错误");
+	        }
+		});
+	}
+});
+
 
 /* From Attr Info
  ----------------------------------*/
